@@ -1,3 +1,10 @@
+/**
+ * Description: Tests for array implementation
+ * 
+ * @author Helena Lindén, Johan Stråle
+ * @since 2014-03-11
+ * 
+ */
 package se.kth.list.test;
 
 import java.util.List;

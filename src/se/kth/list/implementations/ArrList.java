@@ -1,3 +1,10 @@
+/**
+ * Description: An implementation of the List interface using an array
+ * as internal representation
+ * 
+ * @author Helena Lindén, Johan Stråle
+ * @since 2014-03-11
+ */
 package se.kth.list.implementations;
 
 import java.lang.reflect.Array;
