@@ -88,20 +88,6 @@ public class ArrList<E> implements List<E> {
 		return false;
 	}
 
-	private void doubleCapacity() {
-
-		@SuppressWarnings("unchecked")
-		E[] newList = (E[]) new Object[mList.length * 2];
-		System.arraycopy(mList, 0, newList, 0, mSize);
-		mList = newList;
-	}
-
-	private void checkBounds(int index) {
-		if (index < 0 || index >= mSize) {
-			throw new IndexOutOfBoundsException("Index: " + index);
-		}
-	}
-
 	@Override
 	public boolean contains(Object o) {
 		for (int i = 0; i < mSize; i++) {
@@ -113,7 +99,7 @@ public class ArrList<E> implements List<E> {
 
 	@Override
 	public Iterator<E> iterator() {
-		return new ArrListIterator<E>();
+		return new ArrIterator<E>();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -145,8 +131,20 @@ public class ArrList<E> implements List<E> {
 
 	@Override
 	public boolean containsAll(Collection<?> c) {
-		// TODO Auto-generated method stub
-		return false;
+		
+		boolean isFound = false;
+		
+		for(Object o : c) {
+			for(int i = 0; i < mSize; i++) {
+				if(mList[i].equals(o))
+					isFound = true;
+			}
+			if(!isFound)
+				return false;
+			else
+				isFound = false;
+		}
+		return true;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -184,23 +182,36 @@ public class ArrList<E> implements List<E> {
 
 	@Override
 	public ListIterator<E> listIterator() {
-		// TODO Auto-generated method stub
-		return null;
+		return new arrListIterator<E>();
 	}
 
 	@Override
 	public ListIterator<E> listIterator(int index) {
-		// TODO Auto-generated method stub
-		return null;
+		checkBounds(index);
+		return new arrListIterator<E>(index);
 	}
 
-	// **************************************************************************************************************//
-	private class ArrListIterator<T> implements Iterator<T> {
+	private void doubleCapacity() {
+	
+		@SuppressWarnings("unchecked")
+		E[] newList = (E[]) new Object[mList.length * 2];
+		System.arraycopy(mList, 0, newList, 0, mSize);
+		mList = newList;
+	}
+
+	private void checkBounds(int index) {
+		if (index < 0 || index >= mSize) {
+			throw new IndexOutOfBoundsException("Index: " + index);
+		}
+	}
+
+	// *******************************************----ITERATOR----******************************************* //
+	private class ArrIterator<T> implements Iterator<T> {
 
 		private int currentIndex;
 		private int previousIndex;
 
-		public ArrListIterator() {
+		public ArrIterator() {
 			currentIndex = 0;
 			previousIndex = -1;
 		}
@@ -235,6 +246,96 @@ public class ArrList<E> implements List<E> {
 		}
 	}
 
+	// *****************************************----LIST ITERATOR----***************************************** //	
+	private class arrListIterator<T> implements ListIterator<T> {
+
+		private int currentIndex;
+		private int previousIndex;
+		
+		public arrListIterator() {
+			this(0);
+		}
+		
+		public arrListIterator(int index) {
+			currentIndex = index;
+			previousIndex = -1;
+		}
+		
+		@Override
+		public boolean hasNext() {
+			
+			if (currentIndex < mSize) {
+				return true;
+			}
+			return false;
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public T next() {
+			if (currentIndex < mSize) {
+				previousIndex = currentIndex;
+				return (T) get(currentIndex++);
+			} else {
+				throw new NoSuchElementException();
+			}
+		}
+
+		@Override
+		public boolean hasPrevious() {
+			
+			if(currentIndex > 0) {
+				return true;
+			}
+			return false;
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public T previous() {
+			if (currentIndex > 0) {
+				previousIndex = currentIndex;
+				return (T) get(--currentIndex);
+			} else {
+				throw new NoSuchElementException();
+			}
+		}
+
+		@Override
+		public int nextIndex() {
+			if(currentIndex == mSize)
+				return mSize;
+			else
+				return currentIndex + 1;
+		}
+
+		@Override
+		public int previousIndex() {
+			if(currentIndex == 0)
+				return -1;
+			else
+				return currentIndex - 1;
+		}
+
+		@Override
+		public void remove() {
+			if (previousIndex != -1) {
+				ArrList.this.remove(previousIndex);
+				previousIndex = -1;
+			}
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public void add(T e) {
+			ArrList.this.add(currentIndex++, (E)e);
+		}
+
+		@Override
+		public void set(T e) {
+			throw new UnsupportedOperationException();
+		}
+	}
 	// **************************************************************************************************************//
 
 	@Override

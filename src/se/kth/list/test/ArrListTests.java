@@ -1,6 +1,7 @@
 package se.kth.list.test;
 
 import java.util.List;
+import java.util.ListIterator;
 
 import org.junit.Test;
 
@@ -14,18 +15,20 @@ public class ArrListTests {
 
 		List<Obj> list = new ArrList<Obj>();
 
-		Obj o = new Obj(1);
-
+		Obj o1 = new Obj(1);
+		Obj o2 = new Obj(2);
+		Obj o3 = new Obj(3);
+		Obj o4 = new Obj(4);
 		
-		list.add(new Obj(2));
-		list.add(o);
-		list.add(o);
-		
-		System.out.println(list.lastIndexOf(new Obj(2)));
+		list.add(o1);
+		list.add(o2);
+		list.add(o3);
 
-		for (Object os : list) {
-				System.out.println(((Obj) os).getTest());
-		}
+		ListIterator<Obj> it = list.listIterator(2);
+		
+		it.add(o4);
+		
+		System.out.println(it.next().getTest());
 	}
 
 }
