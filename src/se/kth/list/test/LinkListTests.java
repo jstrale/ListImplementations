@@ -253,7 +253,6 @@ public class LinkListTests {
 		
 		while(it.hasPrevious()) {
 			i--;
-			System.out.println(i);
 			assertEquals(i, it.previous().getTest());
 		}
 		
