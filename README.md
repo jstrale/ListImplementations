@@ -9,7 +9,6 @@ There are two implementations:
 
 2: Implemented using an own linked list as the internal representation
 
-Team members:
-Johan Stråle
 
-Helena Lindén
+Team members:
+Johan Stråle & Helena Lindén
