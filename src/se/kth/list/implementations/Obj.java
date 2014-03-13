@@ -1,3 +1,11 @@
+/**
+ * Description: This class represents a simple object that is used in 
+ * the tests for the implemented list classes.
+ * 
+ * @author Helena Lindén, Johan Stråle
+ * @since 2014-03-11
+ */
+
 package se.kth.list.implementations;
 
 public class Obj {
@@ -11,6 +19,4 @@ public class Obj {
 	public int getTest() {
 		return test;
 	}
-	
-	
 }

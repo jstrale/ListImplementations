@@ -51,24 +51,23 @@ public class LinkList<E> implements List<E>{
 		ListItem<E> newItem = new ListItem<E>(element); 
 		ListItem<E> oldItem;
 
-		if(index <= mSize/2)
-			oldItem = traverseFromFirst(index);
-		else
-			oldItem = traverseFromLast(index);
-
-		if(mSize == 0) {
+		if(mSize == 0) {				// First item added
 			mFirst = newItem;
 			mLast = mFirst;
-		} else if(index == 0) {
+		} else if(index == 0) {			// New First item
 			mFirst.mPrevious = newItem;
 			newItem.mNext = mFirst;
 			mFirst = newItem;
-		} else if(index == mSize-1) {
+		} else if(index == mSize) {		// New Last item
 			mLast.mNext = newItem;
 			newItem.mPrevious = mLast;
 			mLast = newItem;
-		}
-		else {
+		} else {						// Added in existing list
+			if(index <= mSize/2)
+				oldItem = traverseFromFirst(index);
+			else
+				oldItem = traverseFromLast(index);
+			
 			oldItem.mPrevious.mNext = newItem;
 			newItem.mPrevious = oldItem.mPrevious;
 			oldItem.mPrevious = newItem;
@@ -113,16 +112,16 @@ public class LinkList<E> implements List<E>{
 
 		E elementToRemove = itemToRemove.mContent;
 
-		if(mSize == 1) {
+		if(mSize == 1) {				// Last item removed
 			mFirst = null;
 			mLast = null;
-		} else if(index == 0) {
+		} else if(index == 0) {			// New First
 			mFirst = mFirst.mNext;
 			mFirst.mPrevious = null;
-		} else if(index == mSize-1) {
+		} else if(index == mSize-1) {	// New Last
 			mLast = mLast.mPrevious;
 			mLast.mNext = null;
-		} else {
+		} else {						// Remove from middle of list
 			itemToRemove.mPrevious.mNext = itemToRemove.mNext;
 			itemToRemove.mNext.mPrevious = itemToRemove.mPrevious;
 			itemToRemove = null;
@@ -256,7 +255,7 @@ public class LinkList<E> implements List<E>{
 	private ListItem<E> traverseFromLast(int index) {
 		int currentIndex = mSize - 1;
 		ListItem<E> currentItem = mLast;
-
+		
 		while(currentIndex != index) {
 			currentIndex--;
 			currentItem = currentItem.mPrevious; 
