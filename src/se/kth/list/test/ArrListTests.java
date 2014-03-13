@@ -24,16 +24,20 @@ import se.kth.list.implementations.Obj;
 
 public class ArrListTests {
 
+	private static final int NUMBER = 15;
+	private static final int MAX = 10000;
+	private static final int ROUNDS = 200;
+	
 	@Test
 	public void shouldTestAddAndGet() {
 
 		List<Obj> list = new ArrList<Obj>();
 
-		for (int i = 0; i < 15; i++) {
+		for (int i = 0; i < NUMBER; i++) {
 			list.add(new Obj(i));
 		}
 
-		for (int i = 0; i < 15; i++) {
+		for (int i = 0; i < NUMBER; i++) {
 			assertEquals(i, list.get(i).getTest());
 		}
 	}
@@ -43,7 +47,7 @@ public class ArrListTests {
 
 		List<Obj> list = new ArrList<Obj>();
 
-		for (int i = 0; i < 15; i++) {
+		for (int i = 0; i < NUMBER; i++) {
 			list.add(i, new Obj(i));
 			assertEquals(i, list.get(i).getTest());
 		}
@@ -87,11 +91,11 @@ public class ArrListTests {
 
 		List<Obj> list = new ArrList<Obj>();
 
-		for (int i = 0; i < 15; i++) {
+		for (int i = 0; i < NUMBER; i++) {
 			list.add(i, new Obj(i));
 		}
 
-		for (int i = 0; i < 15; i++) {
+		for (int i = 0; i < NUMBER; i++) {
 			assertEquals(i, list.remove(0).getTest());
 		}
 
@@ -111,11 +115,11 @@ public class ArrListTests {
 
 		List<Obj> list = new ArrList<Obj>();
 
-		for (int i = 0; i < 15; i++) {
+		for (int i = 0; i < NUMBER; i++) {
 			list.add(i, new Obj(i));
 		}
 
-		assertEquals(15, list.size());
+		assertEquals(NUMBER, list.size());
 	}
 
 	@Test
@@ -173,7 +177,7 @@ public class ArrListTests {
 
 		List<Obj> list = new ArrList<Obj>();
 
-		for (int i = 0; i < 15; i++) {
+		for (int i = 0; i < NUMBER; i++) {
 			list.add(i, new Obj(i));
 		}
 
@@ -207,7 +211,7 @@ public class ArrListTests {
 
 		List<Obj> list = new ArrList<Obj>();
 
-		for (int i = 0; i < 15; i++) {
+		for (int i = 0; i < NUMBER; i++) {
 			list.add(i, new Obj(i));
 		}
 
@@ -223,7 +227,7 @@ public class ArrListTests {
 
 		List<Obj> list = new ArrList<Obj>();
 
-		for (int i = 0; i < 15; i++) {
+		for (int i = 0; i < NUMBER; i++) {
 			list.add(i, new Obj(i));
 		}
 
@@ -241,7 +245,7 @@ public class ArrListTests {
 
 		List<Obj> list = new ArrList<Obj>();
 
-		for (int i = 0; i < 15; i++) {
+		for (int i = 0; i < NUMBER; i++) {
 			list.add(i, new Obj(i));
 		}
 
@@ -318,7 +322,7 @@ public class ArrListTests {
 
 		List<Obj> list = new ArrList<Obj>();
 
-		for (int i = 0; i < 15; i++) {
+		for (int i = 0; i < NUMBER; i++) {
 			list.add(i, new Obj(i));
 		}
 
@@ -346,7 +350,7 @@ public class ArrListTests {
 		
 		it.add(new Obj(1));
 		
-		assertEquals(15, list.size());
+		assertEquals(NUMBER, list.size());
 	}
 	
 	@Test
@@ -354,7 +358,7 @@ public class ArrListTests {
 
 		List<Obj> list = new ArrList<Obj>();
 
-		for (int i = 0; i < 15; i++) {
+		for (int i = 0; i < NUMBER; i++) {
 			list.add(i, new Obj(i));
 		}
 
@@ -372,5 +376,83 @@ public class ArrListTests {
 			assertEquals(i, o.getTest());
 			i++;
 		}
+	}
+	
+	@Test
+	public void testPerformanceAddToLinkedList() {
+		List<Obj> arrayList = new ArrayList<Obj>();
+		List<Obj> arrList = new ArrList<Obj>();
+		
+		long starttime, stoptime, totaltime=0;
+		
+		for(int j=0; j<ROUNDS; j++) {
+			System.gc();
+			starttime = System.nanoTime();
+			for(int i=0; i<MAX; i++) {
+				arrayList.add(new Obj(i));
+			}
+			stoptime = System.nanoTime();
+			assertEquals(MAX, arrayList.size());
+			totaltime=totaltime+(stoptime-starttime);
+			arrayList.clear();
+		}
+		
+		System.out.println("ArrayList Add time: " + (totaltime*(1E-6))/ROUNDS + " ms/" + MAX + " elements");
+		totaltime=0;
+		
+		for(int j=0; j<ROUNDS; j++) {
+			System.gc();
+			starttime = System.nanoTime();
+			for(int i=0; i<MAX; i++) {
+				arrList.add(new Obj(i));
+			}
+			stoptime = System.nanoTime();
+			assertEquals(MAX, arrList.size());
+			totaltime=totaltime+(stoptime-starttime);
+			arrList.clear();
+		}
+		
+		System.out.println("ArrList Add time: " + (totaltime*(1E-6))/ROUNDS + " ms/" + MAX + " elements");
+	}
+	
+	@Test
+	public void testPerformanceRemoveToLinkedList() {
+		List<Obj> arrayList = new ArrayList<Obj>();
+		List<Obj> arrList = new ArrList<Obj>();
+		
+		long starttime, stoptime, totaltime=0;
+		
+		for(int j=0; j<ROUNDS; j++) {
+			for(int i=0; i<MAX; i++) {
+				arrayList.add(new Obj(i));
+			}
+			System.gc();
+			starttime = System.nanoTime();
+			for(int i=0; i<MAX; i++) {
+				arrayList.remove(0);
+			}
+			stoptime = System.nanoTime();
+			assertTrue(arrayList.isEmpty());
+			totaltime=totaltime+(stoptime-starttime);
+		}
+		
+		System.out.println("ArrayList Remove time: " + (totaltime*(1E-6))/ROUNDS + " ms/" + MAX + " elements");
+		totaltime=0;
+		
+		for(int j=0; j<ROUNDS; j++) {
+			for(int i=0; i<MAX; i++) {
+				arrList.add(new Obj(i));
+			}
+			System.gc();
+			starttime = System.nanoTime();
+			for(int i=0; i<MAX; i++) {
+				arrList.remove(0);
+			}
+			stoptime = System.nanoTime();
+			assertTrue(arrList.isEmpty());
+			totaltime=totaltime+(stoptime-starttime);
+		}
+		
+		System.out.println("ArrList Remove time: " + (totaltime*(1E-6))/ROUNDS + " ms/" + MAX + " elements");
 	}
 }

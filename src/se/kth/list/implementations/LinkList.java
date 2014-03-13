@@ -9,17 +9,14 @@
 package se.kth.list.implementations;
 
 import java.lang.reflect.Array;
-import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
-public class LinkList<E> implements List<E>{
+public class LinkList<E> extends AbsList<E> {
 
 	private ListItem<E> mFirst;
 	private ListItem<E> mLast;
-	private int mSize;
 
 	public LinkList() {
 		mSize = 0;
@@ -90,16 +87,6 @@ public class LinkList<E> implements List<E>{
 	}
 
 	@Override
-	public boolean remove(Object o) {
-		int indexToRemove = indexOf(o);
-		if(indexToRemove != -1) {
-			remove(indexToRemove);
-			return true;
-		}
-		return false;
-	}
-
-	@Override
 	public E remove(int index) {
 		checkBounds(index);
 
@@ -128,26 +115,6 @@ public class LinkList<E> implements List<E>{
 		}
 		mSize--;
 		return elementToRemove;
-	}
-
-	@Override
-	public int size() {
-		return mSize;
-	}
-
-	@Override
-	public boolean isEmpty() {
-		if(mSize == 0)
-			return true;
-		return false;
-	}
-
-	@Override
-	public boolean contains(Object o) {
-		if(indexOf(o) == -1)
-			return false;
-		else
-			return true;
 	}
 
 	@Override
@@ -189,15 +156,6 @@ public class LinkList<E> implements List<E>{
 			index++;
 		}
 		return a;
-	}
-
-	@Override
-	public boolean containsAll(Collection<?> c) {
-		for(Object o : c) {
-			if(indexOf(o) == -1)
-				return false;
-		}
-		return true;
 	}
 
 	@Override
@@ -247,11 +205,6 @@ public class LinkList<E> implements List<E>{
 		return new LinkListIterator<E>(index);
 	}
 
-	private void checkBounds(int index) {
-		if(index < 0 || index >= mSize)
-			throw new IndexOutOfBoundsException("Index: " + index);
-	}
-
 	private ListItem<E> traverseFromLast(int index) {
 		int currentIndex = mSize - 1;
 		ListItem<E> currentItem = mLast;
@@ -287,16 +240,7 @@ public class LinkList<E> implements List<E>{
 	}
 	
 	// *******************************************----ITERATOR----******************************************* //
-	private class LinkIterator<T> implements Iterator<T> {
-
-		private int currentIndex;
-		private int previousIndex;
-		private boolean okToRemove = false;
-
-		public LinkIterator() {
-			currentIndex = 0;
-			previousIndex = -1;
-		}
+	private class LinkIterator<T> extends AbsIterator<T> {
 
 		@Override
 		public boolean hasNext() {
@@ -330,21 +274,16 @@ public class LinkList<E> implements List<E>{
 	}
 		
 	// *****************************************----LIST ITERATOR----***************************************** //	
-	private class LinkListIterator<T> implements ListIterator<T> {
-	
-		private int currentIndex;
-		private int previousIndex;
-		private boolean okToRemove = false;
+	private class LinkListIterator<T> extends AbsListIterator<T> {
 	
 		public LinkListIterator() {
-			this(0);
+			super();
 		}
-	
+		
 		public LinkListIterator(int index) {
-			currentIndex = index;
-			previousIndex = -1;
+			super(index);
 		}
-	
+		
 		@Override
 		public boolean hasNext() {
 	
@@ -366,15 +305,6 @@ public class LinkList<E> implements List<E>{
 			} else {
 				throw new NoSuchElementException();
 			}
-		}
-	
-		@Override
-		public boolean hasPrevious() {
-	
-			if(currentIndex >= 0) {
-				return true;
-			}
-			return false;
 		}
 	
 		@SuppressWarnings("unchecked")
@@ -399,63 +329,17 @@ public class LinkList<E> implements List<E>{
 			else
 				return currentIndex + 1;
 		}
-	
+		
 		@Override
-		public int previousIndex() {
-			if(currentIndex == 0)
-				return -1;
-			else
-				return currentIndex - 1;
-		}
-	
-		@Override
-		public void remove() {
-			if (okToRemove) {
-				LinkList.this.remove(previousIndex);
-				okToRemove = false;
-			}
+		protected void removeIndex() {
+			LinkList.this.remove(previousIndex);
 		}
 	
 		@SuppressWarnings("unchecked")
 		@Override
 		public void add(T e) {
 			okToRemove = false;
-			LinkList.this.add(currentIndex++, (E)e);
+			LinkList.this.add(currentIndex++, (E) e);
 		}
-	
-		@Override
-		public void set(T e) {
-			throw new UnsupportedOperationException();
-		}
-	}
-
-	@Override
-	public boolean addAll(Collection<? extends E> c) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public boolean addAll(int index, Collection<? extends E> c) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public boolean removeAll(Collection<?> c) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public boolean retainAll(Collection<?> c) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public E set(int index, E element) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public List<E> subList(int fromIndex, int toIndex) {
-		throw new UnsupportedOperationException();
 	}
 }

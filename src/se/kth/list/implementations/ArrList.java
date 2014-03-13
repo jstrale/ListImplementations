@@ -8,17 +8,14 @@
 package se.kth.list.implementations;
 
 import java.lang.reflect.Array;
-import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
-public class ArrList<E> implements List<E> {
+public class ArrList<E> extends AbsList<E> {
 
 	private static final int START_SIZE = 10;
 	private E[] mList;
-	private int mSize;
 
 	@SuppressWarnings("unchecked")
 	public ArrList() {
@@ -58,21 +55,6 @@ public class ArrList<E> implements List<E> {
 	}
 
 	@Override
-	public boolean remove(Object o) {
-
-		boolean isFound = false;
-
-		for (int i = 0; i < mSize; i++) {
-			if (mList[i].equals(o)) {
-				remove(i);
-				isFound = true;
-				break;
-			}
-		}
-		return isFound;
-	}
-
-	@Override
 	public E remove(int index) {
 
 		checkBounds(index);
@@ -80,28 +62,6 @@ public class ArrList<E> implements List<E> {
 		System.arraycopy(mList, index + 1, mList, index, mSize - index);
 		mSize--;
 		return removedObject;
-	}
-
-	@Override
-	public int size() {
-		return mSize;
-	}
-
-	@Override
-	public boolean isEmpty() {
-		if (mSize == 0) {
-			return true;
-		}
-		return false;
-	}
-
-	@Override
-	public boolean contains(Object o) {
-		for (int i = 0; i < mSize; i++) {
-			if (mList[i].equals(o))
-				return true;
-		}
-		return false;
 	}
 
 	@Override
@@ -134,24 +94,6 @@ public class ArrList<E> implements List<E> {
 		}
 		System.arraycopy(mList, 0, a, 0, mSize);
 		return a;
-	}
-
-	@Override
-	public boolean containsAll(Collection<?> c) {
-		
-		boolean isFound = false;
-		
-		for(Object o : c) {
-			for(int i = 0; i < mSize; i++) {
-				if(mList[i].equals(o))
-					isFound = true;
-			}
-			if(!isFound)
-				return false;
-			else
-				isFound = false;
-		}
-		return true;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -206,23 +148,8 @@ public class ArrList<E> implements List<E> {
 		mList = newList;
 	}
 
-	private void checkBounds(int index) {
-		if (index < 0 || index >= mSize) {
-			throw new IndexOutOfBoundsException("Index: " + index);
-		}
-	}
-
 	// *******************************************----ITERATOR----******************************************* //
-			private class ArrIterator<T> implements Iterator<T> {
-
-				private int currentIndex;
-				private int previousIndex;
-				private boolean okToRemove = false;
-
-				public ArrIterator() {
-					currentIndex = 0;
-					previousIndex = -1;
-				}
+			private class ArrIterator<T> extends AbsIterator<T> {
 
 				@Override
 				public boolean hasNext() {
@@ -256,19 +183,14 @@ public class ArrList<E> implements List<E> {
 			}
 			
 			// *****************************************----LIST ITERATOR----***************************************** //	
-			private class ArrListIterator<T> implements ListIterator<T> {
-
-				private int currentIndex;
-				private int previousIndex;
-				private boolean okToRemove = false;
+			private class ArrListIterator<T> extends AbsListIterator<T> {
 				
 				public ArrListIterator() {
-					this(0);
+					super();
 				}
 				
 				public ArrListIterator(int index) {
-					currentIndex = index;
-					previousIndex = -1;
+					super(index);
 				}
 				
 				@Override
@@ -292,15 +214,6 @@ public class ArrList<E> implements List<E> {
 					} else {
 						throw new NoSuchElementException();
 					}
-				}
-
-				@Override
-				public boolean hasPrevious() {
-					
-					if(currentIndex >= 0) {
-						return true;
-					}
-					return false;
 				}
 
 				@SuppressWarnings("unchecked")
@@ -327,19 +240,8 @@ public class ArrList<E> implements List<E> {
 				}
 
 				@Override
-				public int previousIndex() {
-					if(currentIndex == 0)
-						return -1;
-					else
-						return currentIndex - 1;
-				}
-
-				@Override
-				public void remove() {
-					if (okToRemove) {
-						ArrList.this.remove(previousIndex);
-						okToRemove = false;
-					}
+				protected void removeIndex() {
+					ArrList.this.remove(previousIndex);
 				}
 
 				@SuppressWarnings("unchecked")
@@ -348,41 +250,6 @@ public class ArrList<E> implements List<E> {
 					okToRemove = false;
 					ArrList.this.add(currentIndex++, (E)e);
 				}
-
-				@Override
-				public void set(T e) {
-					throw new UnsupportedOperationException();
-				}
 			}
 	// **************************************************************************************************************//
-
-	@Override
-	public boolean addAll(Collection<? extends E> c) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public boolean addAll(int index, Collection<? extends E> c) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public boolean removeAll(Collection<?> c) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public boolean retainAll(Collection<?> c) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public E set(int index, E element) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public List<E> subList(int fromIndex, int toIndex) {
-		throw new UnsupportedOperationException();
-	}
 }
